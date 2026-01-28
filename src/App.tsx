@@ -23,6 +23,7 @@ function App() {
         onSubmit={(e) => {
           e.preventDefault();
           console.log('Submitted with values: ', formData);
+          setFormData({ objective: '', keyResult: '' });
         }}
       >
         <h2
@@ -37,6 +38,7 @@ function App() {
           className="border border-black rounded-2xl p-2 mb-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-black"
           placeholder="Objective"
           name="objective"
+          value={formData.objective}
           onChange={(e) => changeInput(e)}
         />
 
@@ -45,6 +47,7 @@ function App() {
           className="border border-black rounded-2xl p-2 mb-4 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-black"
           placeholder="Key Result"
           name="keyResult"
+          value={formData.keyResult}
           onChange={(e) => changeInput(e)}
         />
 
