@@ -11,6 +11,11 @@ function App() {
     keyResult: '',
   });
 
+  const [formError, setFormError] = useState({
+    objective: '',
+    keyResult: '',
+  });
+
   function changeInput(e: React.ChangeEvent<HTMLInputElement>) {
     console.log(formData);
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,7 +45,13 @@ function App() {
           name="objective"
           value={formData.objective}
           onChange={(e) => changeInput(e)}
+          onBlur={(e) =>
+            e.target.value === ''
+              ? setFormError({ ...formError, objective: 'Objective is required!' })
+              : null
+          }
         />
+        {formError.objective && <p className={'text-red-500'}>{formError.objective}</p>}
 
         <input
           type="text"
@@ -49,7 +60,13 @@ function App() {
           name="keyResult"
           value={formData.keyResult}
           onChange={(e) => changeInput(e)}
+          onBlur={(e) =>
+            e.target.value === ''
+              ? setFormError({ ...formError, keyResult: 'key result is required!' })
+              : null
+          }
         />
+        {formError.keyResult && <p className={'text-red-500'}>{formError.keyResult}</p>}
 
         <button
           type="submit"
@@ -60,6 +77,10 @@ function App() {
 
         <button
           type="reset"
+          onClick={() => {
+            setFormData({ ...formData, objective: '', keyResult: '' });
+            setFormError({ ...formError, objective: '', keyResult: '' });
+          }}
           className="bg-red-400 text-white p-2 transition-all rounded-xl duration-300 hover:bg-red-500 hover:scale-105 active:scale-95"
         >
           Clear
