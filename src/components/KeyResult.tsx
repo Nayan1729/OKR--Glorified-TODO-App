@@ -1,17 +1,13 @@
+import { useContext, useState } from 'react';
 import type { KeyResultType } from '../types/okr_types.tsx';
-import { useState } from 'react';
-import React from 'react';
+import { KeyResultContext } from '../providers/KeyResultProvider.tsx';
 
-type KeyResultProps = {
-  keyResultList: KeyResultType[];
-  setKeyResultList: React.Dispatch<React.SetStateAction<KeyResultType[]>>;
-};
-
-const KeyResult = ({ keyResultList, setKeyResultList }: KeyResultProps) => {
+const KeyResult = () => {
   const [keyResult, setKeyResult] = useState<KeyResultType>({
     description: '',
     measure: '',
   });
+  const { keyResultList, setKeyResultList } = useContext(KeyResultContext);
 
   return (
     <div>
@@ -28,7 +24,6 @@ const KeyResult = ({ keyResultList, setKeyResultList }: KeyResultProps) => {
         className="border p-2 mb-3 rounded-xl"
       />
 
-      {/* Key Result Measure */}
       <input
         type="text"
         placeholder="Key Result %"
@@ -42,7 +37,6 @@ const KeyResult = ({ keyResultList, setKeyResultList }: KeyResultProps) => {
         className="border p-2 mb-3 rounded-xl"
       />
 
-      {/* Add Key Result */}
       <button
         type="button"
         onClick={() => {
