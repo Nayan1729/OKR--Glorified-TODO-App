@@ -1,22 +1,31 @@
-import React, { createContext, useState } from 'react';
+import { createContext, useState } from 'react';
 import type { KeyResultType } from '../types/okr_types.tsx';
 import type { ChildrenPropsType } from '../types/children_props_types.tsx';
 
 export type KeyResultListType = {
   keyResultList: KeyResultType[];
-  setKeyResultList: React.Dispatch<React.SetStateAction<KeyResultType[]>>;
+  validateKeyResult: (a: KeyResultType) => void;
 };
 
 export const KeyResultContext = createContext<KeyResultListType>({
   keyResultList: [],
-  setKeyResultList: () => {},
+  validateKeyResult: () => {},
 });
 
 const KeyResultProvider = ({ children }: ChildrenPropsType) => {
   const [keyResultList, setKeyResultList] = useState<KeyResultType[]>([]);
+  const validateKeyResult = (keyResult: KeyResultType) => {
+    if (keyResult.description.length >= 5 && keyResult.measure.endsWith('%')) {
+      setKeyResultList((prev) => [...prev, keyResult]);
+    } else {
+      throw new Error(
+        'Error:: Provide keyResult description greater than 5 and provide measure in %.'
+      );
+    }
+  };
 
   return (
-    <KeyResultContext.Provider value={{ keyResultList, setKeyResultList }}>
+    <KeyResultContext.Provider value={{ keyResultList, validateKeyResult }}>
       {children}
     </KeyResultContext.Provider>
   );

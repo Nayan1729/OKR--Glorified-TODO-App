@@ -7,7 +7,7 @@ const KeyResult = () => {
     description: '',
     measure: '',
   });
-  const { keyResultList, setKeyResultList } = useContext(KeyResultContext);
+  const { keyResultList, validateKeyResult } = useContext(KeyResultContext);
 
   return (
     <div>
@@ -41,8 +41,12 @@ const KeyResult = () => {
         type="button"
         onClick={() => {
           if (!keyResult.description || !keyResult.measure) return;
+          try {
+            validateKeyResult(keyResult);
+          } catch (e) {
+            if (e instanceof Error) alert(e.message);
+          }
 
-          setKeyResultList((prev) => [...prev, keyResult]);
           setKeyResult({ description: '', measure: '' });
         }}
         className="bg-black text-white p-2 mb-3 rounded-xl"
