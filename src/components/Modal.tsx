@@ -1,15 +1,17 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 
 interface ModalProps {
   children: ReactNode;
-  isOpen: boolean;
-  setIsOpen: (a: boolean) => void;
+  openLabelText?: string;
+  closeLabelText?: string;
 }
-const Modal = ({ children, isOpen, setIsOpen }: ModalProps) => {
-  if (!isOpen) return <button onClick={() => setIsOpen(true)}>Add OKR</button>;
+const Modal = ({ children, openLabelText = 'Open', closeLabelText = 'Close' }: ModalProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (!isOpen) return <button onClick={() => setIsOpen(true)}>{openLabelText}</button>;
   return (
     <div className={'fixed inset-0 bg-gray-600/25   '}>
-      <button onClick={() => setIsOpen(false)}>Close</button>
+      <button onClick={() => setIsOpen(false)}>{closeLabelText}</button>
       {children}
     </div>
   );
