@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 import KeyResultForm from './components/KeyResultForm.tsx';
 import { KeyResultContext } from './providers/KeyResultProvider.tsx';
 import type { OKRType } from './types/okr_types.tsx';
+import { createOkr } from './services/okr.service.ts';
 
 interface OKRFormProps {
   onSuccess: () => void;
@@ -28,23 +29,18 @@ function OKRForm({ onSuccess, setOkrs }: OKRFormProps) {
       keyResults: updatedKeyResults,
       isCompleted: false,
     };
+
     setObjective('');
-    console.log(JSON.stringify(newOkr));
     setLoading(true);
-    fetch('http://localhost:3000/okrs', {
-      method: 'POST', // Specify the method
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newOkr),
-    })
+
+    createOkr(newOkr)
       .then(() => {
         onSuccess();
         setOkrs((prev) => [...prev, newOkr]);
         resetKeyResults();
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         alert('Error creating okr');
       })
       .finally(() => setLoading(false));

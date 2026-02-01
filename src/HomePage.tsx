@@ -4,16 +4,19 @@ import { OkrList } from './components/OKRList.tsx';
 import { useEffect, useState } from 'react';
 import type { OKRType } from './types/okr_types.tsx';
 import KeyResultProvider from './providers/KeyResultProvider.tsx';
+import { getAllOkrs } from './services/okr.service.ts';
 
 const HomePage = () => {
   const [okrs, setOkrs] = useState<OKRType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3000/okrs')
-      .then((res) => res.json())
+    getAllOkrs()
       .then((data) => setOkrs(data))
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.error(error);
+        alert('Failed to load OKRs');
+      });
   }, []);
   return (
     <div className="min-h-screen bg-gray-50">
