@@ -9,7 +9,9 @@ const KeyResultForm = () => {
     description: '',
     measure: '',
   });
-  const { keyResultList, validateKeyResult } = useContext(KeyResultContext);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const { keyResultList, addKeyResult, updateKeyResultList, deleteKeyResult } =
+    useContext(KeyResultContext);
 
   return (
     <div className="space-y-6">
@@ -75,9 +77,15 @@ const KeyResultForm = () => {
           onClick={() => {
             if (!keyResult.description || !keyResult.measure) return;
             try {
-              validateKeyResult(keyResult);
+              if (editingIndex !== null) {
+                updateKeyResultList(keyResult, editingIndex);
+                setEditingIndex(null);
+              } else {
+                addKeyResult(keyResult);
+              }
             } catch (e) {
               if (e instanceof Error) alert(e.message);
+              return;
             }
 
             setKeyResult({
@@ -89,8 +97,7 @@ const KeyResultForm = () => {
           }}
           className="w-full bg-white border-2 border-indigo-100 hover:border-indigo-600 text-indigo-600 font-bold py-4 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-indigo-100 flex items-center justify-center gap-2 group cursor-pointer text-sm"
         >
-          <span className="text-xl transition-transform group-hover:rotate-90 duration-300">+</span>
-          Add
+          {editingIndex === null ? 'Add' : 'Update'}
         </button>
       </div>
 
@@ -108,14 +115,33 @@ const KeyResultForm = () => {
               <p className="text-gray-800 font-semibold leading-snug">{kr.description}</p>
             </div>
             <div className="ml-4 bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-black shadow-lg shadow-indigo-100">
-              {kr.measure}
+              {kr.measure}%
+            </div>
+            <div className={'flex items-center justify-center gap-2 ml-1.5'}>
+              <button
+                type={'button'}
+                className={'bg-blue-600 p-2 rounded-2xl'}
+                onClick={() => {
+                  setKeyResult(kr);
+                  setEditingIndex(index);
+                }}
+              >
+                Edit
+              </button>
+              <button
+                type={'button'}
+                className={'bg-red-500 p-2 rounded-2xl'}
+                onClick={() => {
+                  deleteKeyResult(kr);
+                }}
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}
       </div>
     </div>
   );
-
-
 };
 export default KeyResultForm;
