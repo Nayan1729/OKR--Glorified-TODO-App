@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import KeyResult from './components/KeyResult.tsx';
+import KeyResultForm from './components/KeyResultForm.tsx';
 import KeyResultProvider from './providers/KeyResultProvider.tsx';
 
 function OKRForm() {
@@ -43,7 +43,7 @@ function OKRForm() {
 
           {/* Render Key Results */}
           <div className="bg-gray-50/50 p-6 rounded-[2rem] border border-gray-100 mb-8">
-            <KeyResult />
+            <KeyResultForm />
           </div>
 
           {/* Divider */}
