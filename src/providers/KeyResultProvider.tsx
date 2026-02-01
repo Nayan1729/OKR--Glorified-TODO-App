@@ -17,10 +17,15 @@ const KeyResultProvider = ({ children }: ChildrenPropsType) => {
   const [keyResultList, setKeyResultList] = useState<KeyResultType[]>([]);
 
   const validateKeyResult = (keyResult: KeyResultType) => {
-    if (!(keyResult.description.length >= 5 && keyResult.measure.endsWith('%'))) {
+    const measure: number = Number(keyResult.measure);
+    if (!(keyResult.description.length >= 5 && !Number.isNaN(measure))) {
       throw new Error(
-        'Error:: Provide keyResult description greater than 5 and provide measure in %.'
+        'Error:: Provide keyResult description greater than 5 characters and measure should be number'
       );
+    }
+
+    if (measure < 0 || measure > 100) {
+      throw new Error('keyResult must be in range (0-100)');
     }
     setKeyResultList((prev) => [...prev, keyResult]);
   };

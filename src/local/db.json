@@ -187,27 +187,20 @@
       ]
     },
     {
-      "id": "0458ffdd-5c78-49cd-a5cc-a26576265f73",
-      "objective": "Master react",
+      "id": "ddae5783-5c80-49a5-9dad-de0b725ff067",
+      "objective": "complrete the okr frontend ",
       "keyResults": [
         {
-          "id": "5eb209ac-7f3e-42b4-96f5-368ddb35ca66",
+          "id": "55163ca2-6aaf-4a29-9a73-7bd5e22d3b08",
           "isCompleted": false,
-          "description": "Learn To pass props",
-          "measure": "50%"
-        }
-      ],
-      "isCompleted": false
-    },
-    {
-      "id": "e772710c-68da-4fb1-9f0f-34dfb374242f",
-      "objective": "",
-      "keyResults": [
+          "description": "create the edit functionality",
+          "measure": "10"
+        },
         {
-          "id": "e42065ed-72f1-4ab2-920d-9d3508f9a6c0",
+          "id": "e108671f-86c5-4d99-b619-c118d9dc364b",
           "isCompleted": false,
-          "description": "Learn To pass props",
-          "measure": "50%"
+          "description": "create the delete functionality",
+          "measure": "10"
         }
       ],
       "isCompleted": false
