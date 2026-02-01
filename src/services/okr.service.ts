@@ -25,3 +25,17 @@ export const createOkr = async (okr: OKRType): Promise<void> => {
     throw new Error('Failed to create OKR');
   }
 };
+
+export const updateOkr = async (okr: OKRType): Promise<void> => {
+  const response = await fetch(`${SERVER_URL}/${okr.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(okr),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update OKR');
+  }
+};

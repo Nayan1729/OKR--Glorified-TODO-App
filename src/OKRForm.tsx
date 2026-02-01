@@ -1,28 +1,57 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import KeyResultForm from './components/KeyResultForm.tsx';
 import { KeyResultContext } from './providers/KeyResultProvider.tsx';
 import type { OKRType } from './types/okr_types.tsx';
-import { createOkr } from './services/okr.service.ts';
+import { createOkr, updateOkr } from './services/okr.service.ts';
 
 interface OKRFormProps {
   onSuccess: () => void;
   setOkrs: (value: ((prevState: OKRType[]) => OKRType[]) | OKRType[]) => void;
+  editingOkr: OKRType | null;
 }
 
-function OKRForm({ onSuccess, setOkrs }: OKRFormProps) {
+function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
   const [objective, setObjective] = useState('');
-  const { keyResultList, resetKeyResults } = useContext(KeyResultContext);
+  const { keyResultList, resetKeyResults, setAllKeyResults } = useContext(KeyResultContext);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (editingOkr) {
+      setObjective(editingOkr.objective);
+      setAllKeyResults(editingOkr.keyResults);
+    }
+  }, [editingOkr]);
 
   function addObjective() {
     const updatedKeyResults = keyResultList.map((keyResult) => ({
       ...keyResult,
-      id: uuid(),
+      id: keyResult.id || uuid(),
       isCompleted: false,
     }));
+    if (editingOkr) {
+      const updatedOkr: OKRType = {
+        ...editingOkr,
+        objective,
+        keyResults: updatedKeyResults,
+      };
 
+      updateOkr(updatedOkr)
+        .then(() => {
+          setOkrs((prev) => prev.map((okr) => (okr.id === updatedOkr.id ? updatedOkr : okr)));
+
+          resetKeyResults();
+          setObjective('');
+          onSuccess();
+        })
+        .catch(() => {
+          alert('Error Updating OKR');
+        })
+        .finally(() => setLoading(false));
+
+      return;
+    }
     const newOkr: OKRType = {
       id: uuid(),
       objective,

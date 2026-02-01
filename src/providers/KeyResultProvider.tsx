@@ -8,6 +8,7 @@ export type KeyResultListType = {
   addKeyResult: (a: KeyResultType) => void;
   updateKeyResultList: (a: KeyResultType, i: number) => void;
   deleteKeyResult: (a: KeyResultType) => void;
+  setAllKeyResults: (a: KeyResultType[]) => void;
 };
 
 export const KeyResultContext = createContext<KeyResultListType>({
@@ -17,6 +18,7 @@ export const KeyResultContext = createContext<KeyResultListType>({
   resetKeyResults: () => {},
   updateKeyResultList: () => {},
   deleteKeyResult: () => {},
+  setAllKeyResults: () => {},
 });
 
 const KeyResultProvider = ({ children }: ChildrenPropsType) => {
@@ -54,13 +56,24 @@ const KeyResultProvider = ({ children }: ChildrenPropsType) => {
     }
   };
 
+  const setAllKeyResults = (krs: KeyResultType[]) => {
+    setKeyResultList(krs);
+  };
+
   const resetKeyResults = () => {
     setKeyResultList([]);
   };
 
   return (
     <KeyResultContext.Provider
-      value={{ keyResultList, addKeyResult, resetKeyResults, updateKeyResultList, deleteKeyResult }}
+      value={{
+        keyResultList,
+        addKeyResult,
+        resetKeyResults,
+        updateKeyResultList,
+        deleteKeyResult,
+        setAllKeyResults,
+      }}
     >
       {children}
     </KeyResultContext.Provider>

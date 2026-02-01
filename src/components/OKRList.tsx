@@ -3,9 +3,10 @@ import { KeyResultList } from './KeyResult.tsx';
 
 interface OkrListProps {
   okrs: OKRType[];
+  onEdit: (okr: OKRType) => void;
 }
 
-export const OkrList = ({ okrs }: OkrListProps) => {
+export const OkrList = ({ okrs, onEdit }: OkrListProps) => {
   if (!okrs.length) {
     return (
       <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
@@ -41,6 +42,15 @@ export const OkrList = ({ okrs }: OkrListProps) => {
               >
                 {okr.objective}
               </h3>
+              <button
+                type={'button'}
+                onClick={() => {
+                  onEdit(okr);
+                }}
+                className={'bg-purple-400 p-2 rounded-xl text-white mt-2'}
+              >
+                Edit
+              </button>
             </div>
           </div>
           <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100/50">

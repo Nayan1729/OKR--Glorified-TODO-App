@@ -13,7 +13,7 @@ const KeyResult = ({ keyResult, index }: KeyResultProps) => {
       <div className="flex items-center justify-center">
         <input
           type="checkbox"
-          checked={keyResult.isCompleted}
+          checked={Number(keyResult.measure) === 100}
           readOnly
           className="w-5 h-5 rounded-lg border-2 border-indigo-200 text-indigo-600 focus:ring-indigo-500 cursor-pointer transition-colors"
         />
@@ -23,19 +23,19 @@ const KeyResult = ({ keyResult, index }: KeyResultProps) => {
           Key Result #{index + 1}
         </p>
         <p
-          className={`font-semibold leading-snug ${keyResult.isCompleted ? 'text-gray-400 line-through' : 'text-gray-800'}`}
+          className={`font-semibold leading-snug ${Number(keyResult.measure) === 100 ? 'text-gray-400 line-through' : 'text-gray-800'}`}
         >
           {keyResult.description}
         </p>
       </div>
       <div
         className={`ml-2 px-4 py-2 rounded-xl text-sm font-black shadow-lg transition-all ${
-          keyResult.isCompleted
+          Number(keyResult.measure) === 100
             ? 'bg-gray-100 text-gray-400 shadow-none'
             : 'bg-indigo-600 text-white shadow-indigo-100'
         }`}
       >
-        {keyResult.measure}
+        {keyResult.measure}%
       </div>
     </div>
   );

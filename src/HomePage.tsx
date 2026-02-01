@@ -9,6 +9,7 @@ import { getAllOkrs } from './services/okr.service.ts';
 const HomePage = () => {
   const [okrs, setOkrs] = useState<OKRType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingOkr, setEditingOkr] = useState<OKRType | null>(null);
 
   useEffect(() => {
     getAllOkrs()
@@ -46,11 +47,24 @@ const HomePage = () => {
           <h2 className="text-3xl font-bold text-gray-900 mb-2">My Objectives</h2>
           <p className="text-gray-500">Track and manage your goals effectively.</p>
         </div>
-        <OkrList okrs={okrs} />
+        <OkrList
+          okrs={okrs}
+          onEdit={(okr: OKRType) => {
+            setEditingOkr(okr);
+            setIsModalOpen(true);
+          }}
+        />
       </main>
       <KeyResultProvider>
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <OKRForm onSuccess={() => setIsModalOpen(false)} setOkrs={setOkrs} />
+          <OKRForm
+            onSuccess={() => {
+              setIsModalOpen(false);
+              setEditingOkr(null);
+            }}
+            setOkrs={setOkrs}
+            editingOkr={editingOkr}
+          />
         </Modal>
       </KeyResultProvider>
     </div>
