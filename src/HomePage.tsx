@@ -1,27 +1,19 @@
 import Modal from './components/Modal.tsx';
 import OKRForm from './OKRForm.tsx';
 import { OkrList } from './components/OKRList.tsx';
+import { useEffect, useState } from 'react';
 
 const HomePage = () => {
-  const okrs = [
-    {
-      id: 'okr-1',
-      objective: 'Improve onboarding experience for new users',
-      keyResults: [
-        {
-          id: 'kr-1',
-          isCompleted: false,
-          description: 'Reduce onboarding completion time',
-          measure: '50%',
-        },
-      ],
-    },
-  ];
-
+  const [okrs, setOkrs] = useState([]);
+  useEffect(() => {
+    fetch('http://localhost:3000/okrs')
+      .then((res) => res.json())
+      .then((data) => setOkrs(data))
+      .catch((error) => console.log(error));
+  }, []);
   return (
     <div>
       <OkrList okrs={okrs} />
-
       <Modal>
         <OKRForm />
       </Modal>
