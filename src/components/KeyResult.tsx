@@ -32,7 +32,7 @@ export interface KeyResultListProps {
 
 export function KeyResultList({ keyResults }: KeyResultListProps) {
   return (
-    <div>
+    <div className="space-y-3">
       {keyResults.map((keyResult: KeyResultType, index: number) => (
         <KeyResult key={index} keyResult={keyResult} index={index} />
       ))}
