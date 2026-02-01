@@ -185,6 +185,32 @@
           "measure": "70%"
         }
       ]
+    },
+    {
+      "id": "0458ffdd-5c78-49cd-a5cc-a26576265f73",
+      "objective": "Master react",
+      "keyResults": [
+        {
+          "id": "5eb209ac-7f3e-42b4-96f5-368ddb35ca66",
+          "isCompleted": false,
+          "description": "Learn To pass props",
+          "measure": "50%"
+        }
+      ],
+      "isCompleted": false
+    },
+    {
+      "id": "e772710c-68da-4fb1-9f0f-34dfb374242f",
+      "objective": "",
+      "keyResults": [
+        {
+          "id": "e42065ed-72f1-4ab2-920d-9d3508f9a6c0",
+          "isCompleted": false,
+          "description": "Learn To pass props",
+          "measure": "50%"
+        }
+      ],
+      "isCompleted": false
     }
   ]
 }

@@ -2,9 +2,11 @@ import Modal from './components/Modal.tsx';
 import OKRForm from './OKRForm.tsx';
 import { OkrList } from './components/OKRList.tsx';
 import { useEffect, useState } from 'react';
+import type { OKRType } from './types/okr_types.tsx';
+import KeyResultProvider from './providers/KeyResultProvider.tsx';
 
 const HomePage = () => {
-  const [okrs, setOkrs] = useState([]);
+  const [okrs, setOkrs] = useState<OKRType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -15,7 +17,6 @@ const HomePage = () => {
   }, []);
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-10 bg-opacity-80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -44,10 +45,11 @@ const HomePage = () => {
         </div>
         <OkrList okrs={okrs} />
       </main>
-
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <OKRForm />
-      </Modal>
+      <KeyResultProvider>
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <OKRForm onSuccess={() => setIsModalOpen(false)} setOkrs={setOkrs} />
+        </Modal>
+      </KeyResultProvider>
     </div>
   );
 };

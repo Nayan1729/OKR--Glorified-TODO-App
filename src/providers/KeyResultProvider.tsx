@@ -4,11 +4,13 @@ import type { ChildrenPropsType } from '../types/children_props_types.tsx';
 export type KeyResultListType = {
   keyResultList: KeyResultType[];
   validateKeyResult: (a: KeyResultType) => void;
+  resetKeyResults: () => void;
 };
 
 export const KeyResultContext = createContext<KeyResultListType>({
   keyResultList: [],
   validateKeyResult: () => {},
+  resetKeyResults: () => {},
 });
 
 const KeyResultProvider = ({ children }: ChildrenPropsType) => {
@@ -23,8 +25,12 @@ const KeyResultProvider = ({ children }: ChildrenPropsType) => {
     setKeyResultList((prev) => [...prev, keyResult]);
   };
 
+  const resetKeyResults = () => {
+    setKeyResultList([]);
+  };
+
   return (
-    <KeyResultContext.Provider value={{ keyResultList, validateKeyResult }}>
+    <KeyResultContext.Provider value={{ keyResultList, validateKeyResult, resetKeyResults }}>
       {children}
     </KeyResultContext.Provider>
   );

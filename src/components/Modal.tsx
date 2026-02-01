@@ -19,7 +19,7 @@ const Modal = ({ children, isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="relative z-[100]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div className="relative z-100" aria-labelledby="modal-title" role="dialog" aria-modal="true">
       <div
         className="fixed inset-0 bg-gray-900/60 backdrop-blur-md transition-opacity"
         onClick={onClose}

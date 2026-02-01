@@ -6,6 +6,7 @@ export type KeyResultType = {
 };
 export type OKRType = {
   id: string;
+  isCompleted: boolean;
   objective: string;
   keyResults: KeyResultType[];
 };

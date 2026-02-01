@@ -19,17 +19,28 @@ export const OkrList = ({ okrs }: OkrListProps) => {
       {okrs.map((okr: OKRType, index: number) => (
         <div
           key={index}
-          className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300"
+          className={`bg-white rounded-4xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 ${okr.isCompleted ? 'opacity-90' : ''}`}
         >
           <div className="flex items-start gap-4 mb-6">
-            <div className="bg-indigo-50 p-3 rounded-2xl">
-              <span className="text-2xl">🚩</span>
+            <div className="flex items-center pt-1">
+              <input
+                type="checkbox"
+                checked={okr.isCompleted}
+                readOnly
+                className="w-6 h-6 rounded-xl border-2 border-indigo-200 text-indigo-600 focus:ring-indigo-500 cursor-pointer transition-colors"
+              />
             </div>
-            <div>
-              <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-1">
-                Objective
-              </p>
-              <h3 className="text-xl font-bold text-gray-900 leading-tight">{okr.objective}</h3>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md">
+                  Objective
+                </span>
+              </div>
+              <h3
+                className={`text-xl font-bold leading-tight ${okr.isCompleted ? 'text-gray-400 line-through' : 'text-gray-900'}`}
+              >
+                {okr.objective}
+              </h3>
             </div>
           </div>
           <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100/50">
