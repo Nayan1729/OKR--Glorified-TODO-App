@@ -129,7 +129,7 @@ function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
         type="submit"
         className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-3xl shadow-xl shadow-indigo-200 hover:shadow-indigo-300 transform transition-all active:scale-[0.98] duration-200 cursor-pointer text-lg"
       >
-        Create Objective
+        {editingOkr ? 'Update OKR' : 'Create OKR'}
       </button>
     </form>
   );

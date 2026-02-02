@@ -1,41 +1,60 @@
+import { CheckCircle2, Circle, Activity, Target } from 'lucide-react';
 import type { KeyResultType } from '../types/okr_types.tsx';
 
 interface KeyResultProps {
   keyResult: KeyResultType;
   index: number;
 }
+
 const KeyResult = ({ keyResult, index }: KeyResultProps) => {
+  const isFinished = Number(keyResult.measure) === 100;
+
   return (
     <div
       key={keyResult.id}
-      className={`bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in-up flex items-center gap-4 group ${keyResult.isCompleted ? 'opacity-75' : ''}`}
+      className={`group flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${
+        isFinished
+          ? 'bg-slate-50/40 border-slate-100 opacity-80'
+          : 'bg-white border-slate-200 hover:border-indigo-300 hover:shadow-md hover:shadow-indigo-500/5 hover:translate-x-1'
+      }`}
     >
-      <div className="flex items-center justify-center">
-        <input
-          type="checkbox"
-          checked={Number(keyResult.measure) === 100}
-          readOnly
-          className="w-5 h-5 rounded-lg border-2 border-indigo-200 text-indigo-600 focus:ring-indigo-500 cursor-pointer transition-colors"
-        />
+      {/* Status Icon */}
+      <div className="shrink-0 transition-transform duration-300 group-hover:scale-110">
+        {isFinished ? (
+          <CheckCircle2 size={22} className="text-emerald-500" />
+        ) : (
+          <Circle size={22} className="text-slate-300 group-hover:text-indigo-400" />
+        )}
       </div>
-      <div className="flex-1">
-        <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">
-          Key Result #{index + 1}
-        </p>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5">
+          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
+            <Target size={10} className={isFinished ? 'text-emerald-400' : 'text-indigo-400'} />
+            Metric {index + 1}
+          </span>
+        </div>
         <p
-          className={`font-semibold leading-snug ${Number(keyResult.measure) === 100 ? 'text-gray-400 line-through' : 'text-gray-800'}`}
+          className={`text-[14px] font-semibold tracking-tight transition-all duration-300 truncate ${
+            isFinished ? 'text-slate-400 line-through decoration-2' : 'text-slate-700'
+          }`}
         >
           {keyResult.description}
         </p>
       </div>
+
+      {/* Score Badge */}
       <div
-        className={`ml-2 px-4 py-2 rounded-xl text-sm font-black shadow-lg transition-all ${
-          Number(keyResult.measure) === 100
-            ? 'bg-gray-100 text-gray-400 shadow-none'
-            : 'bg-indigo-600 text-white shadow-indigo-100'
+        className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-bold transition-all duration-300 ${
+          isFinished
+            ? 'bg-emerald-50 text-emerald-600'
+            : 'bg-slate-900 text-white shadow-lg shadow-slate-200'
         }`}
       >
-        {keyResult.measure}%
+        {!isFinished && <Activity size={12} className="animate-pulse" />}
+        <span className="font-mono tabular-nums">{keyResult.measure}</span>
+        <span className="text-[10px] opacity-70">%</span>
       </div>
     </div>
   );
@@ -47,10 +66,16 @@ export interface KeyResultListProps {
 
 export function KeyResultList({ keyResults }: KeyResultListProps) {
   return (
-    <div className="space-y-3">
-      {keyResults.map((keyResult: KeyResultType, index: number) => (
-        <KeyResult key={keyResult.id} keyResult={keyResult} index={index} />
-      ))}
+    <div className="grid gap-3 sm:grid-cols-1 lg:grid-cols-1">
+      {keyResults.length > 0 ? (
+        keyResults.map((keyResult: KeyResultType, index: number) => (
+          <KeyResult key={keyResult.id} keyResult={keyResult} index={index} />
+        ))
+      ) : (
+        <div className="py-4 text-center">
+          <p className="text-xs font-medium text-slate-400 italic">No key results defined yet.</p>
+        </div>
+      )}
     </div>
   );
 }
