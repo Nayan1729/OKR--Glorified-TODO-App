@@ -4,7 +4,7 @@ import { OkrList } from './components/OKRList.tsx';
 import { useEffect, useState } from 'react';
 import type { OKRType } from './types/okr_types.tsx';
 import KeyResultProvider from './providers/KeyResultProvider.tsx';
-import { getAllOkrs } from './services/okr.service.ts';
+import { getAllOkrs, patchOkr } from './services/okr.service.ts';
 
 const HomePage = () => {
   const [okrs, setOkrs] = useState<OKRType[]>([]);
@@ -19,6 +19,19 @@ const HomePage = () => {
         alert('Failed to load OKRs');
       });
   }, []);
+
+  const handleToggle = (id: number, isCompleted: boolean) => {
+    patchOkr(id, { isCompleted })
+      .then((updatedOkr) => {
+        setOkrs((prev) => prev.map((okr) => (okr.id === id ? { ...okr, ...updatedOkr } : okr)));
+        alert(isCompleted ? 'Objective marked as completed! 🎉' : 'Objective re-opened.');
+      })
+      .catch((err) => {
+        console.error(err);
+        alert('Failed to update status');
+      });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white border-b border-gray-100 sticky top-0 z-10 bg-opacity-80 backdrop-blur-md">
@@ -53,6 +66,8 @@ const HomePage = () => {
             setEditingOkr(okr);
             setIsModalOpen(true);
           }}
+          setOkrs={setOkrs}
+          onToggle={handleToggle}
         />
       </main>
       <KeyResultProvider>

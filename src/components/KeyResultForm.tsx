@@ -4,10 +4,9 @@ import { KeyResultContext } from '../providers/KeyResultProvider.tsx';
 
 const KeyResultForm = () => {
   const [keyResult, setKeyResult] = useState<KeyResultType>({
-    id: '',
-    isCompleted: false,
     description: '',
-    measure: '',
+    currentProgress: 0,
+    targetProgress: 100,
   });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const { keyResultList, addKeyResult, updateKeyResultList, deleteKeyResult } =
@@ -40,19 +39,41 @@ const KeyResultForm = () => {
           />
         </div>
 
-        <div className="group">
-          <input
-            type="text"
-            placeholder="Measure (e.g. 80%)"
-            value={keyResult.measure}
-            onChange={(e) =>
-              setKeyResult((prev) => ({
-                ...prev,
-                measure: e.target.value,
-              }))
-            }
-            className="w-full border-2 border-gray-100 bg-white p-4 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all duration-300 placeholder-gray-400 text-gray-700 font-medium"
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="group">
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">
+              Current
+            </label>
+            <input
+              type="number"
+              placeholder="0"
+              value={keyResult.currentProgress}
+              onChange={(e) =>
+                setKeyResult((prev) => ({
+                  ...prev,
+                  currentProgress: parseInt(e.target.value) || 0,
+                }))
+              }
+              className="w-full border-2 border-gray-100 bg-white p-4 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all duration-300 placeholder-gray-400 text-gray-700 font-medium"
+            />
+          </div>
+          <div className="group">
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">
+              Target
+            </label>
+            <input
+              type="number"
+              placeholder="100"
+              value={keyResult.targetProgress}
+              onChange={(e) =>
+                setKeyResult((prev) => ({
+                  ...prev,
+                  targetProgress: parseInt(e.target.value) || 0,
+                }))
+              }
+              className="w-full border-2 border-gray-100 bg-white p-4 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all duration-300 placeholder-gray-400 text-gray-700 font-medium"
+            />
+          </div>
         </div>
       </div>
 
@@ -61,10 +82,9 @@ const KeyResultForm = () => {
           type="button"
           onClick={() =>
             setKeyResult({
-              id: '',
-              isCompleted: false,
               description: '',
-              measure: '',
+              currentProgress: 0,
+              targetProgress: 100,
             })
           }
           className="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-4 rounded-2xl transition-all duration-300 cursor-pointer text-sm"
@@ -75,7 +95,7 @@ const KeyResultForm = () => {
         <button
           type="button"
           onClick={() => {
-            if (!keyResult.description || !keyResult.measure) return;
+            if (!keyResult.description) return;
             try {
               if (editingIndex !== null) {
                 updateKeyResultList(keyResult, editingIndex);
@@ -89,10 +109,9 @@ const KeyResultForm = () => {
             }
 
             setKeyResult({
-              id: '',
-              isCompleted: false,
               description: '',
-              measure: '',
+              currentProgress: 0,
+              targetProgress: 100,
             });
           }}
           className="w-full bg-white border-2 border-indigo-100 hover:border-indigo-600 text-indigo-600 font-bold py-4 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-indigo-100 flex items-center justify-center gap-2 group cursor-pointer text-sm"
@@ -105,22 +124,32 @@ const KeyResultForm = () => {
         {keyResultList.map((kr, index) => (
           <div
             key={index}
-            className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in-up flex justify-between items-center group"
+            className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in-up flex justify-between items-center group gap-4"
             style={{ animationDelay: `${index * 100}ms` }}
           >
             <div className="flex-1">
               <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-1">
                 Key Result #{index + 1}
               </p>
-              <p className="text-gray-800 font-semibold leading-snug">{kr.description}</p>
+              <p
+                className={`font-semibold leading-snug ${kr.currentProgress >= kr.targetProgress ? 'text-gray-400 line-through' : 'text-gray-800'}`}
+              >
+                {kr.description}
+              </p>
             </div>
-            <div className="ml-4 bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-black shadow-lg shadow-indigo-100">
-              {kr.measure}%
+            <div
+              className={`px-4 py-2 rounded-xl text-sm font-black shadow-lg transition-all ${
+                kr.currentProgress >= kr.targetProgress
+                  ? 'bg-gray-100 text-gray-400 shadow-none'
+                  : 'bg-indigo-600 text-white shadow-indigo-100'
+              }`}
+            >
+              {kr.currentProgress} / {kr.targetProgress}
             </div>
             <div className={'flex items-center justify-center gap-2 ml-1.5'}>
               <button
                 type={'button'}
-                className={'bg-blue-600 p-2 rounded-2xl'}
+                className={'bg-blue-600 p-2 rounded-2xl text-white hover:bg-blue-700 transition-colors'}
                 onClick={() => {
                   setKeyResult(kr);
                   setEditingIndex(index);
@@ -130,7 +159,7 @@ const KeyResultForm = () => {
               </button>
               <button
                 type={'button'}
-                className={'bg-red-500 p-2 rounded-2xl'}
+                className={'bg-red-500 p-2 rounded-2xl text-white hover:bg-red-600 transition-colors'}
                 onClick={() => {
                   deleteKeyResult(kr);
                 }}
