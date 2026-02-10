@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 
 import KeyResultForm from './components/KeyResultForm.tsx';
 import { KeyResultContext } from './providers/KeyResultProvider.tsx';
 import type { OKRType } from './types/okr_types.tsx';
 import { createOkr, updateOkr } from './services/okr.service.ts';
+import toast from 'react-hot-toast';
 
 interface OKRFormProps {
   onSuccess: () => void;
@@ -13,60 +13,71 @@ interface OKRFormProps {
 }
 
 function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
-  const [objective, setObjective] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const { keyResultList, resetKeyResults, setAllKeyResults } = useContext(KeyResultContext);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (editingOkr) {
-      setObjective(editingOkr.objective);
+      setTitle(editingOkr.title);
+      setDescription(editingOkr.description);
       setAllKeyResults(editingOkr.keyResults);
     }
   }, [editingOkr]);
 
   function addObjective() {
+    const now = new Date().toISOString();
     const updatedKeyResults = keyResultList.map((keyResult) => ({
       ...keyResult,
-      id: keyResult.id || uuid(),
-      isCompleted: false,
     }));
+
     if (editingOkr) {
       const updatedOkr: OKRType = {
         ...editingOkr,
-        objective,
-        keyResults: updatedKeyResults,
+        title,
+        description,
+        updatedAt: now,
       };
 
-      updateOkr(updatedOkr)
-        .then(() => {
-          setOkrs((prev) => prev.map((okr) => (okr.id === updatedOkr.id ? updatedOkr : okr)));
+      const { keyResults, ...updatedOkrWithoutKeyResults } = updatedOkr;
+      updateOkr(updatedOkrWithoutKeyResults)
+        .then((savedOkr) => {
+          setOkrs((prev) => prev.map((okr) => (okr.id === savedOkr.id ? savedOkr : okr)));
 
           resetKeyResults();
-          setObjective('');
+          setTitle('');
+          setDescription('');
+          toast.success(`Objective ${savedOkr.title} successfully updated `);
           onSuccess();
         })
         .catch(() => {
-          alert('Error Updating OKR');
+          toast.error('Error Updating OKR');
         })
-        .finally(() => setLoading(false));
+        .finally(() => {
+          setLoading(false);
+        });
 
       return;
     }
     const newOkr: OKRType = {
-      id: uuid(),
-      objective,
+      title,
+      description,
       keyResults: updatedKeyResults,
       isCompleted: false,
+      createdAt: now,
+      updatedAt: now,
     };
 
-    setObjective('');
     setLoading(true);
 
     createOkr(newOkr)
-      .then(() => {
+      .then((savedOkr) => {
         onSuccess();
-        setOkrs((prev) => [...prev, newOkr]);
+        setOkrs((prev) => [...prev, savedOkr]);
         resetKeyResults();
+        setTitle('');
+        setDescription('');
       })
       .catch((err) => {
         console.error(err);
@@ -92,24 +103,37 @@ function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
         <p className="text-gray-400 font-medium text-sm">Define your path to success</p>
       </div>
 
-      <div className="mb-8">
-        <label className="block text-xs font-bold text-indigo-600 uppercase tracking-[0.2em] mb-4 ml-1">
-          Main Objective
-        </label>
-        <div className="relative group">
-          <span className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl transition-transform group-focus-within:scale-125 duration-300">
-            🚀
-          </span>
-          <input
-            type="text"
-            placeholder="What's the big goal?"
-            value={objective}
-            onChange={(e) => setObjective(e.target.value)}
-            className="w-full border-2 border-gray-100 bg-gray-50/50 py-4 pl-16 pr-16 rounded-3xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-500 transition-all duration-300 placeholder-gray-400 text-gray-800 text-lg font-semibold shadow-inner"
-          />
-          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-2xl transition-transform group-focus-within:scale-125 duration-300">
-            ✨
-          </span>
+      <div className="mb-8 space-y-4">
+        <div>
+          <label className="block text-xs font-bold text-indigo-600 uppercase tracking-[0.2em] mb-4 ml-1">
+            Objective Title
+          </label>
+          <div className="relative group">
+            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl transition-transform group-focus-within:scale-125 duration-300">
+              🚀
+            </span>
+            <input
+              type="text"
+              placeholder="What's the big goal?"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full border-2 border-gray-100 bg-gray-50/50 py-4 pl-16 pr-16 rounded-3xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-500 transition-all duration-300 placeholder-gray-400 text-gray-800 text-lg font-semibold shadow-inner"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-bold text-indigo-600 uppercase tracking-[0.2em] mb-4 ml-1">
+            Description
+          </label>
+          <div className="relative group">
+            <textarea
+              placeholder="Add more details..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full border-2 border-gray-100 bg-gray-50/50 py-4 px-6 rounded-3xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-500 transition-all duration-300 placeholder-gray-400 text-gray-800 text-base font-medium shadow-inner min-h-25"
+            />
+          </div>
         </div>
       </div>
 
@@ -129,7 +153,7 @@ function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
         type="submit"
         className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-3xl shadow-xl shadow-indigo-200 hover:shadow-indigo-300 transform transition-all active:scale-[0.98] duration-200 cursor-pointer text-lg"
       >
-        Create Objective
+        {editingOkr ? 'Update Objective' : 'Create Objective'}
       </button>
     </form>
   );

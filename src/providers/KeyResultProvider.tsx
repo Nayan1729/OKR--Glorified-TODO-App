@@ -25,15 +25,16 @@ const KeyResultProvider = ({ children }: ChildrenPropsType) => {
   const [keyResultList, setKeyResultList] = useState<KeyResultType[]>([]);
 
   const validateKeyResult = (keyResult: KeyResultType) => {
-    const measure: number = Number(keyResult.measure);
-    if (!(keyResult.description.length >= 5 && !Number.isNaN(measure))) {
-      throw new Error(
-        'Error:: Provide keyResult description greater than 5 characters and measure should be number'
-      );
+    if (keyResult.description.length < 5) {
+      throw new Error('Error:: Provide keyResult description greater than 5 characters');
     }
 
-    if (measure < 0 || measure > 100) {
-      throw new Error('keyResult must be in range (0-100)');
+    if (keyResult.currentProgress < 0 || keyResult.targetProgress < 0) {
+      throw new Error('Progress values cannot be negative');
+    }
+
+    if (keyResult.currentProgress > keyResult.targetProgress) {
+      throw new Error('Current progress cannot be greater than target progress');
     }
   };
 
@@ -43,8 +44,8 @@ const KeyResultProvider = ({ children }: ChildrenPropsType) => {
   };
 
   const updateKeyResultList = (updatedKeyResult: KeyResultType, index: number) => {
+    console.log(updatedKeyResult);
     validateKeyResult(updatedKeyResult);
-
     setKeyResultList((prev) =>
       prev.map((kr, i) => (i === index ? { ...kr, ...updatedKeyResult } : kr))
     );

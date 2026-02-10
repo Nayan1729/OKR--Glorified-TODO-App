@@ -1,12 +1,19 @@
 export type KeyResultType = {
-  id: string;
-  isCompleted: boolean;
+  id?: number; // Optional for new items
   description: string;
-  measure: string;
+  currentProgress: number;
+  targetProgress: number;
+  objectiveId?: number; // Optional until attached
+  createdAt?: string;
+  updatedAt?: string;
 };
+
 export type OKRType = {
-  id: string;
+  id?: number; // Optional for new items
+  title: string;
+  description: string;
   isCompleted: boolean;
-  objective: string;
+  createdAt?: string;
+  updatedAt?: string;
   keyResults: KeyResultType[];
 };
