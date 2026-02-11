@@ -1,6 +1,8 @@
 import { useContext, useState } from 'react';
 import type { KeyResultType } from '../types/okr_types.tsx';
 import { KeyResultContext } from '../providers/KeyResultProvider.tsx';
+import { deleteKeyResultApi, updateKeyResultApi } from '../services/key-result.service.ts';
+import toast from 'react-hot-toast';
 
 const KeyResultForm = () => {
   const [keyResult, setKeyResult] = useState<KeyResultType>({
@@ -11,6 +13,30 @@ const KeyResultForm = () => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const { keyResultList, addKeyResult, updateKeyResultList, deleteKeyResult } =
     useContext(KeyResultContext);
+
+  const callDeleteKeyResultApi = async (keyResultToBeDeleted: KeyResultType) => {
+    try {
+      await deleteKeyResultApi(keyResultToBeDeleted);
+      toast.success(`Successfully deleted key result ${keyResultToBeDeleted.description}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error);
+        toast.error(error.message);
+      }
+    }
+  };
+
+  const callUpdateKeyResultApi = async (keyResultToBeUpdated: KeyResultType) => {
+    try {
+      await updateKeyResultApi(keyResultToBeUpdated);
+      toast.success('Successfully updated key result');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error);
+        toast.error(error.message);
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -149,19 +175,25 @@ const KeyResultForm = () => {
             <div className={'flex items-center justify-center gap-2 ml-1.5'}>
               <button
                 type={'button'}
-                className={'bg-blue-600 p-2 rounded-2xl text-white hover:bg-blue-700 transition-colors'}
-                onClick={() => {
+                className={
+                  'bg-blue-600 p-2 rounded-2xl text-white hover:bg-blue-700 transition-colors'
+                }
+                onClick={async () => {
                   setKeyResult(kr);
                   setEditingIndex(index);
+                  await callUpdateKeyResultApi(kr);
                 }}
               >
                 Edit
               </button>
               <button
                 type={'button'}
-                className={'bg-red-500 p-2 rounded-2xl text-white hover:bg-red-600 transition-colors'}
-                onClick={() => {
+                className={
+                  'bg-red-500 p-2 rounded-2xl text-white hover:bg-red-600 transition-colors'
+                }
+                onClick={async () => {
                   deleteKeyResult(kr);
+                  await callDeleteKeyResultApi(kr);
                 }}
               >
                 Delete
