@@ -22,11 +22,10 @@ export const KeyResult = ({ keyResult, index }: KeyResultProps) => {
         </p>
       </div>
       <div
-        className={`ml-2 px-4 py-2 rounded-xl text-sm font-black shadow-lg transition-all ${
-          isCompleted
+        className={`ml-2 px-4 py-2 rounded-xl text-sm font-black shadow-lg transition-all ${isCompleted
             ? 'bg-gray-100 text-gray-400 shadow-none'
             : 'bg-indigo-600 text-white shadow-indigo-100'
-        }`}
+          }`}
       >
         {keyResult.currentProgress} / {keyResult.targetProgress}
       </div>
@@ -46,7 +45,9 @@ export function KeyResultList({ keyResults }: KeyResultListProps) {
           <div
             key={keyResult.id || index}
             className={`p-4 rounded-lg transition-all ${
-              index % 2 === 0 && 'bg-blue-50 border border-blue-200'
+              index % 2 !== 0
+                ? 'bg-orange-500 border border-red-400'
+                : 'bg-blue-50 border border-blue-200'
             }`}
           >
             <KeyResult keyResult={keyResult} index={index} />
