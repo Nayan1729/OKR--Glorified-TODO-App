@@ -44,7 +44,6 @@ function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
       updateOkr(updatedOkrWithoutKeyResults)
         .then((savedOkr) => {
           setOkrs((prev) => prev.map((okr) => (okr.id === savedOkr.id ? savedOkr : okr)));
-
           resetKeyResults();
           setTitle('');
           setDescription('');

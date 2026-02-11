@@ -44,7 +44,7 @@ const HomePage = () => {
             <div>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all duration-200 active:scale-95 cursor-pointer flex items-center gap-2"
+                className="bg-pink-500 hover:bg-black text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all duration-200 active:scale-95 cursor-pointer flex items-center gap-2"
               >
                 <span className="text-lg">+</span>
                 New Objective
