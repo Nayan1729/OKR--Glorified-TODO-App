@@ -41,9 +41,18 @@ export interface KeyResultListProps {
 export function KeyResultList({ keyResults }: KeyResultListProps) {
   return (
     <div className="space-y-3">
-      {(keyResults || []).map((keyResult: KeyResultType, index: number) => (
-        <KeyResult key={keyResult.id || index} keyResult={keyResult} index={index} />
-      ))}
+      {(keyResults || []).map((keyResult: KeyResultType, index: number) => {
+        return (
+          <div
+            key={keyResult.id || index}
+            className={`p-4 rounded-lg transition-all ${
+              index % 2 === 0 && 'bg-blue-50 border border-blue-200'
+            }`}
+          >
+            <KeyResult keyResult={keyResult} index={index} />
+          </div>
+        );
+      })}
     </div>
   );
 }
