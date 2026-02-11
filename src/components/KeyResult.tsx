@@ -44,11 +44,8 @@ export function KeyResultList({ keyResults }: KeyResultListProps) {
         return (
           <div
             key={keyResult.id || index}
-            className={`p-4 rounded-lg transition-all ${
-              index % 2 !== 0
-                ? 'bg-orange-500 border border-red-400'
-                : 'bg-blue-50 border border-blue-200'
-            }`}
+            className={`p-4 rounded-lg transition-all ${index % 2 !== 0 && 'bg-orange-500 border border-red-400'
+              }`}
           >
             <KeyResult keyResult={keyResult} index={index} />
           </div>
