@@ -4,6 +4,7 @@ import KeyResultForm from './components/KeyResultForm.tsx';
 import { KeyResultContext } from './providers/KeyResultProvider.tsx';
 import type { OKRType } from './types/okr_types.tsx';
 import { createOkr, updateOkr } from './services/okr.service.ts';
+import { createKeyResultApi, updateKeyResultApi } from './services/key-result.service.ts';
 import toast from 'react-hot-toast';
 
 interface OKRFormProps {
@@ -41,14 +42,29 @@ function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
       };
 
       const { keyResults, ...updatedOkrWithoutKeyResults } = updatedOkr;
+      setLoading(true);
       updateOkr(updatedOkrWithoutKeyResults)
-        .then((savedOkr) => {
-          setOkrs((prev) => prev.map((okr) => (okr.id === savedOkr.id ? savedOkr : okr)));
-          resetKeyResults();
-          setTitle('');
-          setDescription('');
-          toast.success(`Objective ${savedOkr.title} successfully updated `);
-          onSuccess();
+        .then(async (savedOkr) => {
+          try {
+            let finalOkr: OKRType = savedOkr;
+            for (const kr of keyResultList) {
+              if (kr.id) {
+                finalOkr = await updateKeyResultApi(kr);
+              } else {
+                finalOkr = await createKeyResultApi({ ...kr, objectiveId: savedOkr.id });
+              }
+            }
+
+            setOkrs((prev) => prev.map((okr) => (okr.id === finalOkr.id ? finalOkr : okr)));
+            resetKeyResults();
+            setTitle('');
+            setDescription('');
+            toast.success(`Objective ${finalOkr.title} successfully updated `);
+            onSuccess();
+          } catch (error) {
+            console.error(error);
+            toast.error('Error Updating Key Results');
+          }
         })
         .catch(() => {
           toast.error('Error Updating OKR');
@@ -137,7 +153,7 @@ function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
       </div>
 
       <div className="bg-gray-50/50 p-6 rounded-4xl border border-gray-100 mb-8">
-        <KeyResultForm />
+        <KeyResultForm setOkrs={setOkrs} />
       </div>
 
       <div className="relative flex py-4 items-center mb-6">

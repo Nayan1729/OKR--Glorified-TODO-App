@@ -39,7 +39,10 @@ export class ObjectiveController {
     return this.objectiveService.updateById(id, updatedObjective);
   }
   @Patch(':id')
-  updateStatus(@Param('id', ParseIntPipe) id: number) {
-    return this.objectiveService.updateStatus(id, false);
+  updateStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('isCompleted') isCompleted: boolean,
+  ) {
+    return this.objectiveService.updateStatus(id, isCompleted);
   }
 }

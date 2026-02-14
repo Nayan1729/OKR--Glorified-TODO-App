@@ -50,12 +50,56 @@ export const OkrList = ({ okrs, onEdit, setOkrs }: OkrListProps) => {
                 {okr.title}
               </h3>
               {okr.description && <p className="text-gray-500 mt-2 text-sm">{okr.description}</p>}
+
+              <div className="mt-4">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    Overall Progress
+                  </span>
+                  <span className="text-xs font-bold text-indigo-600">
+                    {okr.keyResults.length > 0
+                      ? Math.round(
+                          (okr.keyResults.reduce(
+                            (acc, kr) => acc + kr.currentProgress / kr.targetProgress,
+                            0
+                          ) /
+                            okr.keyResults.length) *
+                            100
+                        )
+                      : 0}
+                    %
+                  </span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="bg-indigo-500 h-full transition-all duration-500 ease-out"
+                    style={{
+                      width: `${
+                        okr.keyResults.length > 0
+                          ? Math.min(
+                              100,
+                              Math.round(
+                                (okr.keyResults.reduce(
+                                  (acc, kr) => acc + kr.currentProgress / kr.targetProgress,
+                                  0
+                                ) /
+                                  okr.keyResults.length) *
+                                  100
+                              )
+                            )
+                          : 0
+                      }%`,
+                    }}
+                  ></div>
+                </div>
+              </div>
+
               <button
                 type={'button'}
                 onClick={() => {
                   onEdit(okr);
                 }}
-                className={'bg-purple-400 p-2 rounded-xl text-white mt-2'}
+                className={'bg-purple-400 p-2 rounded-xl text-white mt-2 cursor-pointer'}
               >
                 Edit
               </button>
@@ -66,7 +110,7 @@ export const OkrList = ({ okrs, onEdit, setOkrs }: OkrListProps) => {
                     onDelete(okr.id);
                   }
                 }}
-                className={'bg-red-600 p-2 rounded-xl text-white mt-2 ml-2 '}
+                className={'bg-red-600 p-2 rounded-xl text-white mt-2 ml-2 cursor-pointer'}
               >
                 Delete
               </button>
@@ -76,7 +120,7 @@ export const OkrList = ({ okrs, onEdit, setOkrs }: OkrListProps) => {
             <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
               <span>🎯</span> Key Results
             </h4>
-            <KeyResultList keyResults={okr.keyResults} />
+            <KeyResultList keyResults={okr.keyResults} setOkrs={setOkrs} />
           </div>
         </div>
       ))}

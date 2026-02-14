@@ -5,12 +5,26 @@ import { ObjectiveService } from '../objective/objective.service';
 import { Prisma } from '../../generated/prisma/client';
 import { UpdateCurrentProgressDto } from './update-current-progress.dto';
 
+import { CreateKeyResultDto } from './dto/create-key-result.dto';
+
 @Injectable()
 export class KeyResultService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly objectiveService: ObjectiveService,
   ) {}
+
+  async create(objectiveId: number, keyResultDto: CreateKeyResultDto) {
+    await this.objectiveService.getOne(objectiveId);
+    await this.prismaService.keyResult.create({
+      data: {
+        ...keyResultDto,
+        objectiveId,
+      },
+    });
+    return this.objectiveService.updateByKeyResultChange(objectiveId);
+  }
+
   getAllByObjectiveId(objectiveId: number) {
     return this.prismaService.keyResult.findMany({
       where: { objectiveId },
@@ -45,12 +59,13 @@ export class KeyResultService {
   ) {
     await this.objectiveService.getOne(objectiveId);
     try {
-      return this.prismaService.keyResult.update({
+      await this.prismaService.keyResult.update({
         where: {
           id,
         },
         data: { ...updatedKeyResultDto },
       });
+      return this.objectiveService.updateByKeyResultChange(objectiveId);
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -64,11 +79,12 @@ export class KeyResultService {
 
   async deleteOne(objectiveId: number, id: number) {
     await this.objectiveService.getOne(objectiveId);
-    return this.prismaService.keyResult.delete({
+    await this.prismaService.keyResult.delete({
       where: {
         id,
       },
     });
+    return this.objectiveService.updateByKeyResultChange(objectiveId);
   }
 
   async updateProgress(
@@ -86,6 +102,6 @@ export class KeyResultService {
       },
     });
 
-    return this.objectiveService.updateStatus(objectiveId, true);
+    return this.objectiveService.updateByKeyResultChange(objectiveId);
   }
 }

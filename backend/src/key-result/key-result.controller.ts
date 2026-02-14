@@ -6,15 +6,26 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   Put,
 } from '@nestjs/common';
 import { KeyResultService } from './key-result.service';
 import { UpdatedKeyResultDTO } from './dto/updated-key-result.dto';
 import { UpdateCurrentProgressDto } from './update-current-progress.dto';
+import { CreateKeyResultDto } from './dto/create-key-result.dto';
 
 @Controller('/objective/:objectiveId/key-result')
 export class KeyResultController {
   constructor(private readonly keyResultService: KeyResultService) {}
+
+  @Post()
+  create(
+    @Param('objectiveId', ParseIntPipe) objectiveId: number,
+    @Body() createKeyResultDto: CreateKeyResultDto,
+  ) {
+    return this.keyResultService.create(objectiveId, createKeyResultDto);
+  }
+
   @Get()
   getAllByObjetiveId(@Param('objectiveId', ParseIntPipe) objectiveId: number) {
     console.log(objectiveId);

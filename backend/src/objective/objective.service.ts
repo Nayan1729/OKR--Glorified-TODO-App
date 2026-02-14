@@ -46,7 +46,7 @@ export class ObjectiveService {
           id,
         },
         data: { ...updateObjectiveDto },
-        include: {keyResults: true },
+        include: { keyResults: true },
       });
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
@@ -61,17 +61,25 @@ export class ObjectiveService {
 
   async updateByKeyResultChange(id: number) {
     const objective = await this.getOne(id);
-    let objectiveProgress = 0;
     if (!objective) {
       throw new NotFoundException('Objective not found');
     }
-    objective.keyResults.forEach((keyResult) => {
-      objectiveProgress += keyResult.currentProgress / keyResult.targetProgress;
-    });
-    objectiveProgress = objectiveProgress / objective.keyResults.length || 0;
-    objective.isCompleted = objectiveProgress >= 100;
-    // #### Add progress as well in Objective....
-    return await this.updateStatus(objective.id, objective.isCompleted);
+
+    if (objective.keyResults.length === 0) {
+      return this.updateStatus(objective.id, false);
+    }
+
+    const totalProgress = objective.keyResults.reduce((sum, kr) => {
+      if (kr.targetProgress > 0) {
+        return sum + kr.currentProgress / kr.targetProgress;
+      }
+      return sum;
+    }, 0);
+
+    const overallProgress = (totalProgress / objective.keyResults.length) * 100;
+    const isCompleted = overallProgress >= 100;
+
+    return await this.updateStatus(objective.id, isCompleted);
   }
 
   async updateStatus(id: number, isCompleted: boolean) {

@@ -1,10 +1,14 @@
 import { useContext, useState } from 'react';
-import type { KeyResultType } from '../types/okr_types.tsx';
+import type { KeyResultType, OKRType } from '../types/okr_types.tsx';
 import { KeyResultContext } from '../providers/KeyResultProvider.tsx';
 import { deleteKeyResultApi, updateKeyResultApi } from '../services/key-result.service.ts';
 import toast from 'react-hot-toast';
 
-const KeyResultForm = () => {
+interface KeyResultFormProps {
+  setOkrs: (value: ((prevState: OKRType[]) => OKRType[]) | OKRType[]) => void;
+}
+
+const KeyResultForm = ({ setOkrs }: KeyResultFormProps) => {
   const [keyResult, setKeyResult] = useState<KeyResultType>({
     description: '',
     currentProgress: 0,
@@ -16,20 +20,9 @@ const KeyResultForm = () => {
 
   const callDeleteKeyResultApi = async (keyResultToBeDeleted: KeyResultType) => {
     try {
-      await deleteKeyResultApi(keyResultToBeDeleted);
+      const updatedOkr: OKRType = await deleteKeyResultApi(keyResultToBeDeleted);
+      setOkrs((prevOkrs) => prevOkrs.map((okr) => (okr.id === updatedOkr.id ? updatedOkr : okr)));
       toast.success(`Successfully deleted key result ${keyResultToBeDeleted.description}`);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(error);
-        toast.error(error.message);
-      }
-    }
-  };
-
-  const callUpdateKeyResultApi = async (keyResultToBeUpdated: KeyResultType) => {
-    try {
-      await updateKeyResultApi(keyResultToBeUpdated);
-      toast.success('Successfully updated key result');
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error);
@@ -120,12 +113,19 @@ const KeyResultForm = () => {
 
         <button
           type="button"
-          onClick={() => {
+          onClick={async () => {
             if (!keyResult.description) return;
             try {
               if (editingIndex !== null) {
                 updateKeyResultList(keyResult, editingIndex);
                 setEditingIndex(null);
+                if (keyResult.id) {
+                  const updatedOkr = await updateKeyResultApi(keyResult);
+                  setOkrs((prevOkrs) =>
+                    prevOkrs.map((okr) => (okr.id === updatedOkr.id ? updatedOkr : okr))
+                  );
+                  toast.success('Key result updated successfully.');
+                }
               } else {
                 addKeyResult(keyResult);
               }
@@ -181,7 +181,6 @@ const KeyResultForm = () => {
                 onClick={async () => {
                   setKeyResult(kr);
                   setEditingIndex(index);
-                  await callUpdateKeyResultApi(kr);
                 }}
               >
                 Edit
@@ -193,7 +192,9 @@ const KeyResultForm = () => {
                 }
                 onClick={async () => {
                   deleteKeyResult(kr);
-                  await callDeleteKeyResultApi(kr);
+                  if (kr.id) {
+                    await callDeleteKeyResultApi(kr);
+                  }
                 }}
               >
                 Delete
