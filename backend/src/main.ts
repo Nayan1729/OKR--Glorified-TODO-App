@@ -1,28 +1,11 @@
-import express, {Router} from 'express';
-import cors from 'cors';
-import {HealthController} from "./healthController.js";
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 
-const app = express();
-
-const PORT = process.env.PORT || 3000;
-
-app.use(cors());
-
-
- function getHeathStatus() {
-  const router = Router();
-  const controller = new HealthController()
-  router.get('/', (req, res) => {
-    console.log('getHeathStatus');
-
-    return controller.checkHealth(req, res)
-  })
-  return router;
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: 'http://localhost:5173',
+  });
+  await app.listen(process.env.PORT ?? 3000);
 }
-
-
-app.use('/health', getHeathStatus());
-
-app.listen(PORT, () => {
-  console.log('Listening on port 3000');
-});
+bootstrap();

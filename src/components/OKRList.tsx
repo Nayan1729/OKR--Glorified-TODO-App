@@ -5,11 +5,10 @@ import { deleteOkr } from '../services/okr.service.ts';
 interface OkrListProps {
   okrs: OKRType[];
   onEdit: (okr: OKRType) => void;
-  onToggle: (id: number, isCompleted: boolean) => void;
   setOkrs: (value: ((prevState: OKRType[]) => OKRType[]) | OKRType[]) => void;
 }
 
-export const OkrList = ({ okrs, onEdit, onToggle, setOkrs }: OkrListProps) => {
+export const OkrList = ({ okrs, onEdit, setOkrs }: OkrListProps) => {
   function onDelete(okrId: number) {
     deleteOkr(okrId)
       .then((deletedOkr) => {
@@ -38,14 +37,7 @@ export const OkrList = ({ okrs, onEdit, onToggle, setOkrs }: OkrListProps) => {
           className={`bg-white rounded-4xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 ${okr.isCompleted ? 'opacity-90' : ''}`}
         >
           <div className="flex items-start gap-4 mb-6">
-            <div className="flex items-center pt-1">
-              <input
-                type="checkbox"
-                checked={okr.isCompleted}
-                onChange={(e) => okr.id && onToggle(okr.id, e.target.checked)}
-                className="w-6 h-6 rounded-xl border-2 border-indigo-200 text-indigo-600 focus:ring-indigo-500 cursor-pointer transition-colors"
-              />
-            </div>
+            <div className="flex items-center pt-1"></div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <span className="bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md">
