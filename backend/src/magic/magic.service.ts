@@ -77,9 +77,6 @@ export class MagicService {
       apiKey: process.env['GEMINI_API_KEY'],
     });
     const config = {
-      thinkingConfig: {
-        thinkingLevel: ThinkingLevel.MINIMAL,
-      },
       responseMimeType: 'application/json',
       responseSchema: convertSchema(okrSchema),
       systemInstruction: [
@@ -94,7 +91,7 @@ export class MagicService {
         },
       ],
     };
-    const model = 'gemini-3-flash-preview';
+    const model = 'gemini-2.5-flash-lite';
     const contents = [
       {
         role: 'user',

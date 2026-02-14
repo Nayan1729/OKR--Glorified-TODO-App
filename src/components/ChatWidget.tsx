@@ -47,11 +47,11 @@ const ChatWidget = () => {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4 pointer-events-none">
 
             <div
                 className={`w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${isOpen
-                    ? 'opacity-100 scale-100 translate-y-0'
+                    ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                     : 'opacity-0 scale-95 translate-y-10 pointer-events-none'
                     }`}
             >
@@ -124,7 +124,7 @@ const ChatWidget = () => {
 
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-14 h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-full shadow-lg shadow-indigo-300 flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer z-40 ${isOpen ? 'rotate-90' : 'rotate-0'}`}
+                className={`w-14 h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-full shadow-lg shadow-indigo-300 flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer z-40 pointer-events-auto ${isOpen ? 'rotate-90' : 'rotate-0'}`}
                 aria-label={isOpen ? "Close chat" : "Open chat"}
             >
                 {isOpen ? (
