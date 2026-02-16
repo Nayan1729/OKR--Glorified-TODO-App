@@ -67,3 +67,19 @@ export const deleteOkr = async (id: number): Promise<OKRType> => {
   }
   return response.json();
 };
+
+export const getMagicResponseApi = async (data: Pick<OKRType, 'title' | 'description'>) => {
+  const response = await fetch(`${SERVER_URL}/ai`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  
+  if (!response.ok) {
+    throw new Error('Failed to do magic');
+  }
+  return response.json();
+};

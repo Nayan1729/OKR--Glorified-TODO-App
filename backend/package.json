@@ -28,6 +28,7 @@
     "@nestjs/swagger": "^11.2.6",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
+    "@sodaru/yup-to-json-schema": "^2.0.1",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "install": "^0.13.0",

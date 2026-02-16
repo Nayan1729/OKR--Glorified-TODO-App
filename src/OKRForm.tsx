@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import KeyResultForm from './components/KeyResultForm.tsx';
 import { KeyResultContext } from './providers/KeyResultProvider.tsx';
 import type { OKRType } from './types/okr_types.tsx';
-import { createOkr, updateOkr } from './services/okr.service.ts';
+import { createOkr, getMagicResponseApi, updateOkr } from './services/okr.service.ts';
 import { createKeyResultApi, updateKeyResultApi } from './services/key-result.service.ts';
 import toast from 'react-hot-toast';
 
@@ -18,6 +18,23 @@ function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
   const [description, setDescription] = useState('');
   const { keyResultList, resetKeyResults, setAllKeyResults } = useContext(KeyResultContext);
   const [loading, setLoading] = useState(false);
+
+  const handleMagic = async () => {
+    setLoading(true);
+
+    try {
+      const response = await getMagicResponseApi({ title, description });
+      setTitle(response?.title);
+      setDescription(response?.description);
+      setAllKeyResults(response?.keyResults);
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (editingOkr) {
@@ -123,6 +140,7 @@ function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
           <label className="block text-xs font-bold text-indigo-600 uppercase tracking-[0.2em] mb-4 ml-1">
             Objective Title
           </label>
+
           <div className="relative group">
             <span className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl transition-transform group-focus-within:scale-125 duration-300">
               🚀
@@ -134,6 +152,15 @@ function OKRForm({ onSuccess, setOkrs, editingOkr }: OKRFormProps) {
               onChange={(e) => setTitle(e.target.value)}
               className="w-full border-2 border-gray-100 bg-gray-50/50 py-4 pl-16 pr-16 rounded-3xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-500 transition-all duration-300 placeholder-gray-400 text-gray-800 text-lg font-semibold shadow-inner"
             />
+            <button
+              type="button"
+              onClick={() => {
+                handleMagic();
+              }}
+              className="absolute right-5 top-1/2 -translate-y-1/2 text-2xl transition-transform group-focus-within:scale-125 duration-300"
+            >
+              ✨
+            </button>
           </div>
         </div>
 
