@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ObjectiveModule } from './objective/objective.module';
 import { KeyResultModule } from './key-result/key-result.module';
 import { ConfigModule } from '@nestjs/config';
+import { MagicModule } from './magic/magic.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    MagicModule,
   ],
   controllers: [AppController],
   providers: [AppService],
