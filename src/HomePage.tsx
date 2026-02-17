@@ -1,4 +1,5 @@
 import Modal from './components/Modal.tsx';
+import ChatWidget from './components/ChatWidget.tsx';
 import OKRForm from './OKRForm.tsx';
 import { OkrList } from './components/OKRList.tsx';
 import { useEffect, useState } from 'react';
@@ -69,6 +70,7 @@ const HomePage = () => {
           />
         </Modal>
       </KeyResultProvider>
+      <ChatWidget />
     </div>
   );
 };

@@ -9,6 +9,25 @@ export const getAllOkrs = async (): Promise<OKRType[]> => {
     throw new Error('Failed to fetch OKRs');
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   return response.json();
 };
 

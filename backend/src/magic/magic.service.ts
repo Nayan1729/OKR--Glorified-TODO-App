@@ -3,6 +3,7 @@ import { CreateObjectiveDto } from '../objective/dto/create-objective.dto';
 import * as yup from 'yup';
 import { convertSchema } from '@sodaru/yup-to-json-schema';
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
+import { ObjectiveService } from 'src/objective/objective.service';
 
 const okrSchema = yup.object({
   title: yup.string().required(),
@@ -22,6 +23,42 @@ const okrSchema = yup.object({
 
 @Injectable()
 export class MagicService {
+  private readonly ai: GoogleGenAI;
+  constructor(private readonly objectiveService: ObjectiveService) {
+    this.ai = new GoogleGenAI({
+      apiKey: process.env['GEMINI_API_KEY'],
+    });
+  }
+  async answerUserQuery(query: string) {
+  const okrData = await this.objectiveService.getAll();
+
+  const model = 'gemini-2.5-flash-lite';
+
+  const prompt = `
+            You are an AI assistant that answers ONLY based on the provided OKR data.
+            Do NOT make up information.
+            If the answer is not present in the data, respond with:
+            "I could not find that information in your OKRs."
+
+            OKR DATA:
+            ${JSON.stringify(okrData)}
+
+            User Question:
+            ${query}
+            `
+    console.log(prompt);
+    
+    
+  const response = await this.ai.models.generateContent({
+    model,
+    contents: prompt,
+  });
+  console.log(response);
+  
+  return response.text;
+}
+
+
   async generateOKR(
     objectiveDto: Pick<CreateObjectiveDto, 'title' | 'description'>,
   ) {
