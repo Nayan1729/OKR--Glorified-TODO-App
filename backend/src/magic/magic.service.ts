@@ -29,34 +29,45 @@ export class MagicService {
       apiKey: process.env['GEMINI_API_KEY'],
     });
   }
-  async answerUserQuery(query: string) {
-  const okrData = await this.objectiveService.getAll();
+  async answerUserQuery(
+    query: string,
+    history: { role: 'user' | 'model'; text: string }[] = [],
+  ) {
+    const okrData = await this.objectiveService.getAll();
+    const model = 'gemini-2.5-flash-lite';
 
-  const model = 'gemini-2.5-flash-lite';
-
-  const prompt = `
+    const systemInstruction = `
             You are an AI assistant that answers ONLY based on the provided OKR data.
             Do NOT make up information.
             If the answer is not present in the data, respond with:
             "I could not find that information in your OKRs."
-
+            
             OKR DATA:
             ${JSON.stringify(okrData)}
+            `;
 
-            User Question:
-            ${query}
-            `
-    console.log(prompt);
-    
-    
-  const response = await this.ai.models.generateContent({
-    model,
-    contents: prompt,
-  });
-  console.log(response);
-  
-  return response.text;
-}
+    const contents = history.map((msg) => ({
+      role: msg.role,
+      parts: [{ text: msg.text }],
+    }));
+
+    contents.push({
+      role: 'user',
+      parts: [{ text: query }],
+    });
+
+    const response = await this.ai.models.generateContent({
+      model,
+      config: {
+        systemInstruction: {
+          parts: [{ text: systemInstruction }],
+        }
+      },
+      contents,
+    });
+
+    return response?.candidates?.[0]?.content?.parts?.[0]?.text;
+  }
 
 
   async generateOKR(

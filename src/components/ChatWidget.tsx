@@ -3,7 +3,7 @@ import { askAi } from '../services/ai.service';
 import { toast } from 'react-hot-toast';
 
 interface Message {
-    role: 'user' | 'ai';
+    role: 'user' | 'model';
     text: string;
 }
 
@@ -32,14 +32,14 @@ const ChatWidget = () => {
         setIsLoading(true);
 
         try {
-            const response = await askAi(userMessage);
-            setMessages((prev) => [...prev, { role: 'ai', text: response }]);
+            const response = await askAi(userMessage, messages);
+            setMessages((prev) => [...prev, { role: 'model', text: response }]);
         } catch (error) {
             console.error(error);
             toast.error('Failed to get response from AI');
             setMessages((prev) => [
                 ...prev,
-                { role: 'ai', text: 'Sorry, I encountered an error. Please try again.' },
+                { role: 'model', text: 'Sorry, I encountered an error. Please try again.' },
             ]);
         } finally {
             setIsLoading(false);
@@ -48,14 +48,13 @@ const ChatWidget = () => {
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
-            {/* Chat Window */}
+
             <div
                 className={`w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${isOpen
-                        ? 'opacity-100 scale-100 translate-y-0'
-                        : 'opacity-0 scale-95 translate-y-10 pointer-events-none'
+                    ? 'opacity-100 scale-100 translate-y-0'
+                    : 'opacity-0 scale-95 translate-y-10 pointer-events-none'
                     }`}
             >
-                {/* Header */}
                 <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 flex justify-between items-center text-white">
                     <div className="flex items-center gap-2">
                         <span className="text-xl">✨</span>
@@ -73,7 +72,6 @@ const ChatWidget = () => {
                     </button>
                 </div>
 
-                {/* Messages Area */}
                 <div className="h-96 overflow-y-auto p-4 bg-gray-50 flex flex-col gap-3">
                     {messages.length === 0 && (
                         <div className="text-center text-gray-400 mt-8 text-sm">
@@ -85,8 +83,8 @@ const ChatWidget = () => {
                         <div
                             key={idx}
                             className={`max-w-[85%] p-3 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
-                                    ? 'bg-indigo-600 text-white self-end rounded-tr-none shadow-md shadow-indigo-100'
-                                    : 'bg-white text-gray-800 self-start rounded-tl-none shadow-sm border border-gray-100'
+                                ? 'bg-indigo-600 text-white self-end rounded-tr-none shadow-md shadow-indigo-100'
+                                : 'bg-white text-gray-800 self-start rounded-tl-none shadow-sm border border-gray-100'
                                 }`}
                         >
                             {msg.text}
@@ -102,7 +100,6 @@ const ChatWidget = () => {
                     <div ref={messagesEndRef} />
                 </div>
 
-                {/* Input Area */}
                 <form onSubmit={handleSubmit} className="p-3 bg-white border-t border-gray-100 flex gap-2">
                     <input
                         type="text"
@@ -125,7 +122,6 @@ const ChatWidget = () => {
                 </form>
             </div>
 
-            {/* Floating Toggle Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`w-14 h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-full shadow-lg shadow-indigo-300 flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer z-40 ${isOpen ? 'rotate-90' : 'rotate-0'}`}

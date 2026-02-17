@@ -15,7 +15,7 @@ export class MagicController {
   }
 
   @Post('/chat-bot')
-  answerUserQuery(@Body('query') query: string) {
-    return this.magicService.answerUserQuery(query);
+  answerUserQuery(@Body() body: { query: string; history: { role: 'user' | 'model'; text: string }[] }) {
+    return this.magicService.answerUserQuery(body.query, body.history);
   }
 }
